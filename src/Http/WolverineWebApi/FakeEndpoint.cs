@@ -22,6 +22,12 @@ public class FakeEndpoint
 
     #endregion
 
+    [WolverineGet("/fake/hello/described", Summary = "Says hello described", Description = "Returns a greeting with extra metadata")]
+    public string SayHelloDescribed()
+    {
+        return "Hello";
+    }
+
     [WolverineGet("/fake/hello/async2")]
     public ValueTask<string> SayHelloAsync2()
     {

@@ -57,6 +57,84 @@ public class initializing_endpoints_from_method_call : IntegrationContext
     }
 
     [Fact]
+    public void default_endpoint_summary_is_null()
+    {
+        var endpoint = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHello());
+        endpoint.EndpointSummary.ShouldBeNull();
+    }
+
+    [Fact]
+    public void default_endpoint_description_is_null()
+    {
+        var endpoint = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHello());
+        endpoint.EndpointDescription.ShouldBeNull();
+    }
+
+    [Fact]
+    public void read_summary_from_attribute()
+    {
+        var endpoint = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHelloDescribed());
+        endpoint.EndpointSummary.ShouldBe("Says hello described");
+    }
+
+    [Fact]
+    public void read_description_from_attribute()
+    {
+        var endpoint = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHelloDescribed());
+        endpoint.EndpointDescription.ShouldBe("Returns a greeting with extra metadata");
+    }
+
+    [Fact]
+    public void endpoint_name_metadata_is_unique_per_route()
+    {
+        var chain = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHelloAsync());
+        var endpoint = chain.BuildEndpoint(RouteWarmup.Lazy);
+
+        var metadata = endpoint.Metadata.OfType<EndpointNameMetadata>().Single();
+        metadata.EndpointName.ShouldBe(chain.ToString());
+    }
+
+    [Fact]
+    public void endpoint_summary_metadata_from_attribute()
+    {
+        var chain = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHelloDescribed());
+        var endpoint = chain.BuildEndpoint(RouteWarmup.Lazy);
+
+        var metadata = endpoint.Metadata.OfType<IEndpointSummaryMetadata>()
+            .First(x => x.GetType() == typeof(WolverineEndpointSummaryMetadata));
+        metadata.Summary.ShouldBe("Says hello described");
+    }
+
+    [Fact]
+    public void endpoint_description_metadata_from_attribute()
+    {
+        var chain = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHelloDescribed());
+        var endpoint = chain.BuildEndpoint(RouteWarmup.Lazy);
+
+        var metadata = endpoint.Metadata.OfType<IEndpointDescriptionMetadata>()
+            .First(x => x.GetType() == typeof(WolverineEndpointDescriptionMetadata));
+        metadata.Description.ShouldBe("Returns a greeting with extra metadata");
+    }
+
+    [Fact]
+    public void no_summary_metadata_when_not_set()
+    {
+        var chain = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHello());
+        var endpoint = chain.BuildEndpoint(RouteWarmup.Lazy);
+
+        endpoint.Metadata.OfType<WolverineEndpointSummaryMetadata>().Any().ShouldBeFalse();
+    }
+
+    [Fact]
+    public void no_description_metadata_when_not_set()
+    {
+        var chain = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHello());
+        var endpoint = chain.BuildEndpoint(RouteWarmup.Lazy);
+
+        endpoint.Metadata.OfType<WolverineEndpointDescriptionMetadata>().Any().ShouldBeFalse();
+    }
+
+    [Fact]
     public void capturing_the_http_method_metadata()
     {
         var chain = HttpChain.ChainFor<FakeEndpoint>(x => x.SayHello());

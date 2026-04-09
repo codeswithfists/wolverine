@@ -16,6 +16,16 @@ public class WolverineOperationFilter : IOperationFilter // IOperationFilter is 
         if (context.ApiDescription.ActionDescriptor is WolverineActionDescriptor action)
         {
             operation.OperationId = action.Chain.OperationId;
+
+            if (!string.IsNullOrEmpty(action.Chain.EndpointSummary))
+            {
+                operation.Summary = action.Chain.EndpointSummary;
+            }
+
+            if (!string.IsNullOrEmpty(action.Chain.EndpointDescription))
+            {
+                operation.Description = action.Chain.EndpointDescription;
+            }
         }
     }
 }

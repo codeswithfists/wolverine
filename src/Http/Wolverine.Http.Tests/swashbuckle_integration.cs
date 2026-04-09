@@ -44,6 +44,22 @@ public class swashbuckle_integration : IntegrationContext
     }
 
     [Fact]
+    public void derive_summary_from_attribute()
+    {
+        var (_, op) = FindOpenApiDocument(OperationType.Get, "/fake/hello/described");
+
+        op.Summary.ShouldBe("Says hello described");
+    }
+
+    [Fact]
+    public void derive_description_from_attribute()
+    {
+        var (_, op) = FindOpenApiDocument(OperationType.Get, "/fake/hello/described");
+
+        op.Description.ShouldBe("Returns a greeting with extra metadata");
+    }
+
+    [Fact]
     public void apply_tags_from_tags_attribute()
     {
         var endpoint = EndpointFor("/users/sign-up");

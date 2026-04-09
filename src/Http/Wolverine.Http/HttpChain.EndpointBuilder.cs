@@ -120,7 +120,7 @@ public partial class HttpChain : IEndpointConventionBuilder
             builder.Metadata.Add(new RouteNameMetadata(RouteName));
         }
 
-        builder.Metadata.Add(new EndpointNameMetadata(OperationId));
+        builder.Metadata.Add(new EndpointNameMetadata(ToString()));
 
         if (EndpointSummary.IsNotEmpty())
         {

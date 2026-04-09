@@ -741,7 +741,7 @@ public partial class HttpChain : Chain<HttpChain, ModifyHttpChainAttribute>, ICo
         return frame.Variable;
     }
 
-    string IEndpointNameMetadata.EndpointName => OperationId;
+    string IEndpointNameMetadata.EndpointName => ToString();
 
     string IEndpointSummaryMetadata.Summary => EndpointSummary ?? ToString();
 
